@@ -1,5 +1,6 @@
 from rest_framework.serializers import*
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from .models import*
 
 class PostSerializer(ModelSerializer):
@@ -27,3 +28,24 @@ class RegisterSerializer(ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+class LoginSerializer(Serializer):
+    username = CharField(max_length = 116)
+    password = CharField(max_length = 116)
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if username and password:
+            user = authenticate(
+                request = self.context.get('request'),
+                username = username,
+                password = password,
+            )
+
+            if user is None:
+                raise ValidationError('user not found')
+
+        attrs['user'] = user
+        return attrs

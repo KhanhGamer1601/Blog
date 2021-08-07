@@ -8,6 +8,7 @@ router.register('comment', CommentView)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('GetComment/<int:user_id>/', GetCommentView),
-    path('Register/', RegisterView.as_view()),
+    path('getcomment/<int:user_id>/', GetCommentView),
+    path('register/', RegisterView.as_view()),
+    path('login/', LoginView.as_view()),
 ]

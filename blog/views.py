@@ -4,6 +4,7 @@ from rest_framework.permissions import*
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+from rest_framework.authtoken.models import Token
 from .models import*
 from .serializers import*
 
@@ -32,3 +33,18 @@ class RegisterView(GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data = request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user = user)
+            response = Response()
+            response.set_cookie(key = 'key', value = token.key, httponly = True, secure = True, samesite = 'strict')
+            response.data = {
+                'key': token.key
+            }
+            return response
