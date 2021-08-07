@@ -9,4 +9,5 @@ router.register('comment', CommentView)
 urlpatterns = [
     path('', include(router.urls)),
     path('GetComment/<int:user_id>/', GetCommentView),
+    path('Register/', RegisterView.as_view()),
 ]
